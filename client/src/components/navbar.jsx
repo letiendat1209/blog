@@ -4,10 +4,11 @@ import { Menu, X, Search, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 
+const menuLinks = ["project", "blog", "photo", "about", "contact"];
 export const Navbar = () => {
   const { theme, setTheme } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
-  
+
   return (
     <nav className="border-b border-border bg-background backdrop-blur-3xl sticky top-0 z-50">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
@@ -23,36 +24,15 @@ export const Navbar = () => {
           </Link>
 
           <div className="hidden md:flex items-center gap-6">
-            <Link
-              className="text-sm font-medium hover:text-primary transition-colors"
-              href="/project"
-            >
-              Project
-            </Link>
-            <Link
-              className="text-sm font-medium hover:text-primary transition-colors"
-              href="/blog"
-            >
-              Blog
-            </Link>
-            <Link
-              className="text-sm font-medium hover:text-primary transition-colors"
-              href="/photo"
-            >
-              Photo
-            </Link>
-            <Link
-              className="text-sm font-medium hover:text-primary transition-colors"
-              href="/about"
-            >
-              About Me
-            </Link>
-            <Link
-              className="text-sm font-medium hover:text-primary transition-colors"
-              href="/contact"
-            >
-              Contact
-            </Link>
+            {menuLinks.map((link) => (
+              <Link
+                key={link}
+                className="text-sm font-medium hover:text-primary transition-colors"
+                href={`/${link}`}
+              >
+                {link.charAt(0).toUpperCase() + link.slice(1)}
+              </Link>
+            ))}
           </div>
         </div>
 
@@ -78,9 +58,19 @@ export const Navbar = () => {
 
           <button
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="p-2 hover:bg-accent rounded-full text-muted-foreground transition-colors cursor-pointer"
+            className="p-2 hover:bg-accent rounded-full text-muted-foreground transition-all duration-300 cursor-pointer group"
           >
-            {theme === "dark" ? <Sun /> : <Moon />}
+            {theme === "dark" ? (
+              <Sun
+                size={16}
+                className="text-yellow-400 transition-all duration-300 group-hover:rotate-90 group-hover:scale-110 group-hover:text-yellow-300"
+              />
+            ) : (
+              <Moon
+                size={16}
+                className="text-slate-700 transition-all duration-300 group-hover:rotate-[-15deg] group-hover:scale-110 group-hover:text-blue-500"
+              />
+            )}
           </button>
 
           {/* Toggle menu button */}
@@ -97,36 +87,15 @@ export const Navbar = () => {
       {/* MOBILE MENU */}
       {isOpen && (
         <div className="md:hidden absolute top-16 left-0 w-full bg-background border-b border-border p-4 flex flex-col gap-4 shadow-lg animate-in slide-in-from-top-5">
-          <Link
-            className="text-sm font-medium hover:text-primary transition-colors"
-            href="/project"
-          >
-            Project
-          </Link>
-          <Link
-            className="text-sm font-medium hover:text-primary transition-colors"
-            href="/blog"
-          >
-            Blog
-          </Link>
-          <Link
-            className="text-sm font-medium hover:text-primary transition-colors"
-            href="/photo"
-          >
-            Photo
-          </Link>
-          <Link
-            className="text-sm font-medium hover:text-primary transition-colors"
-            href="/about"
-          >
-            About Me
-          </Link>
-          <Link
-            className="text-sm font-medium hover:text-primary transition-colors"
-            href="/contact"
-          >
-            Contact
-          </Link>
+          {menuLinks.map((link) => (
+            <Link
+              key={link}
+              className="text-sm font-medium hover:text-primary transition-colors"
+              href={`/${link}`}
+            >
+              {link.charAt(0).toUpperCase() + link.slice(1)}
+            </Link>
+          ))}
         </div>
       )}
     </nav>

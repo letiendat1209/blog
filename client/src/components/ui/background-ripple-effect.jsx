@@ -36,7 +36,7 @@ export const BackgroundRippleEffect = ({ cellSize = 56 }) => {
       )}
     >
       <div className="relative h-full w-full overflow-hidden">
-        <div className="pointer-events-none absolute inset-0 z-[2]" />
+        <div className="pointer-events-none absolute inset-0 z-2" />
 
         {/* Grid auto responsive */}
         <DivGrid
@@ -84,7 +84,7 @@ const DivGrid = ({
   };
 
   return (
-    <div className={cn("relative z-[3] mx-auto", className)} style={gridStyle}>
+    <div className={cn("relative z-3 mx-auto", className)} style={gridStyle}>
       {cells.map((idx) => {
         const rowIdx = Math.floor(idx / cols);
         const colIdx = idx % cols;
@@ -100,7 +100,7 @@ const DivGrid = ({
             key={idx}
             className={cn(
               "cell relative border-[0.5px] opacity-40 transition-opacity duration-150 will-change-transform hover:opacity-80 dark:shadow-[0px_0px_40px_1px_var(--cell-shadow-color)_inset]",
-              clickedCell && "animate-cell-ripple [animation-fill-mode:none]",
+              clickedCell && "animate-cell-ripple fill-mode-[none]",
               !interactive && "pointer-events-none"
             )}
             style={{
