@@ -30,6 +30,12 @@ const nextConfig = {
         protocol: "https",
         hostname: "plus.unsplash.com",
       },
+      { protocol: "https", hostname: "skillicons.dev" },
+      {
+        protocol: "https",
+        hostname: "github-readme-streak-stats.herokuapp.com",
+      },
+      { protocol: "https", hostname: "github.com" },
     ],
   },
 };

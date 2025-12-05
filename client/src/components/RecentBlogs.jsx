@@ -1,7 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
+import { blogs } from "@/data/blog";
 
+const BLOGS = blogs.slice(0, 3);
 export default function RecentBlogs() {
   return (
     <section className="space-y-8">
@@ -16,30 +18,32 @@ export default function RecentBlogs() {
       </div>
 
       <div className="grid gap-8 md:grid-cols-3">
-        <BlogCard
-          href="/blog/first-post"
-          title="Chào mừng anh em J2Team"
-          date="3 Dec 2025"
-          readTime="1 mins read"
-          description="Post này để biết là web vẫn sống sau đợt ddos =))))) Thank kiu 500 ae đã ddos web của Khoa"
-        />
+        {BLOGS.map((blog, index) => (
+          <BlogCard
+            key={index}
+            href="/"
+            name={blog.name}
+            src={blog.coverImage}
+            title={blog.excerpt}
+            tag={blog.tags}
+            date={blog.date}
+            readTime={blog.readTime}
+            description={blog.shortDescription}
+          />
+        ))}
       </div>
     </section>
   );
 }
 
-function BlogCard({ href, title, date, readTime, description }) {
+function BlogCard({ src, name, excerpt, tag, date, readTime, description }) {
   return (
-    <Link href={href} className="group flex flex-col space-y-4">
+    <Link href="/" className="group flex flex-col space-y-4">
       <div className="aspect-4/3 relative rounded-2xl overflow-hidden bg-muted">
-        <Image
-          fill
-          alt={title}
-          src="https://images.unsplash.com/photo-1542435503-956c469947f6?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0"
-        />
+        <Image alt={name} fill src={src} />
         <div className="absolute top-4 left-4">
           <span className="inline-flex items-center justify-center border w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none bg-black/50 hover:bg-black/70 text-white backdrop-blur-md border-none rounded-full px-3 py-1 text-xs font-medium">
-            Fun
+            {tag}
           </span>
         </div>
       </div>
@@ -50,7 +54,7 @@ function BlogCard({ href, title, date, readTime, description }) {
           <span>{readTime}</span>
         </div>
         <h3 className="text-xl font-bold leading-tight group-hover:text-primary transition-colors line-clamp-2">
-          {title}
+          {excerpt}
         </h3>
         <p className="text-muted-foreground text-sm line-clamp-3 leading-relaxed flex-1">
           {description}

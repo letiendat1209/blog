@@ -4,7 +4,7 @@ import { Menu, X, Search, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 
-const menuLinks = ["project", "blog", "photo", "about", "contact"];
+const menuLinks = ["project", "blogs", "photo", "about", "contact"];
 export const Navbar = () => {
   const { theme, setTheme } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
