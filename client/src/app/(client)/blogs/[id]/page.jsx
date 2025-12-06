@@ -4,7 +4,7 @@ import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
-import CommentSection from "@/components/CommentSection";
+import CommentSection from "@/components/client/CommentSection";
 
 export default async function SingleBlogPage({ params }) {
   const { id } = await params;

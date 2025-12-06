@@ -1,4 +1,4 @@
-import SocialIcon from "@/components/SocialIcon";
+import SocialIcon from "@/components/client/SocialIcon";
 import { BackgroundBeams } from "@/components/ui/background-beams";
 import { Button } from "@/components/ui/button";
 import { GraduationCap } from "lucide-react";
@@ -32,14 +32,14 @@ export default function AboutPage() {
                 src="https://scontent.fsgn2-9.fna.fbcdn.net/v/t39.30808-6/163050864_3003938323264883_2617536581490542695_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=5eD_gf3iDCcQ7kNvwG_lEgs&_nc_oc=AdkUtWED0IHyoibnUVNVXEGSHHiEopvalUgxm3VR7iH2VS70pgVlf_mPmAjd1OwphjoN3sAq5IWmRsz87gbGEOQZ&_nc_zt=23&_nc_ht=scontent.fsgn2-9.fna&_nc_gid=ck3LLVMhbZ5cxRzvNa2k3A&oh=00_AflepmaFXTWoE6k3eHdRBDLsURio2pN1pKkXwuJMFmsouw&oe=69374950"
               />
             </div>
-            <div class="text-center md:text-left space-y-4">
-              <h1 class="text-4xl md:text-5xl text-center font-bold tracking-tight">
+            <div className="text-center md:text-left space-y-4">
+              <h1 className="text-4xl md:text-5xl text-center font-bold tracking-tight">
                 Lê Tiến Đạt
               </h1>
-              <p class="text-xl text-center text-muted-foreground tracking-wide">
+              <p className="text-xl text-center text-muted-foreground tracking-wide">
                 Fullstack Developer &amp; Frontend Developer
               </p>
-              <div class="flex items-center justify-center gap-4">
+              <div className="flex items-center justify-center gap-4">
                 <Button variant="default" className="rounded-3xl">
                   Resume
                 </Button>
@@ -107,18 +107,20 @@ export default function AboutPage() {
                     Studying at THPT Lộc Thanh - Lộc Thanh High School.
                   </p>
                 </div>
-                <div class="relative">
-                  <div class="absolute -left-[41px] w-4 h-4 bg-background border-2 border-primary rounded-full flex items-center justify-center">
-                    <div class="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                <div className="relative">
+                  <div className="absolute -left-[41px] w-4 h-4 bg-background border-2 border-primary rounded-full flex items-center justify-center">
+                    <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
                   </div>
-                  <span class="text-sm text-muted-foreground font-mono">
+                  <span className="text-sm text-muted-foreground font-mono">
                     2021 - 2025
                   </span>
-                  <h4 class="text-lg font-bold text-foreground mt-1">
+                  <h4 className="text-lg font-bold text-foreground mt-1">
                     NTTU University
                   </h4>
-                  <p class="text-primary font-medium">Software Engineering</p>
-                  <p class="text-sm mt-2">
+                  <p className="text-primary font-medium">
+                    Software Engineering
+                  </p>
+                  <p className="text-sm mt-2">
                     Studying Software Engineering at NTTU University.
                   </p>
                 </div>

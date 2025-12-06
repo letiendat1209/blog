@@ -1,10 +1,10 @@
 "use client";
-import AboutSection from "@/components/AboutSection";
-import { BackToTop } from "@/components/backtotop";
-import { CmdKHint } from "@/components/cmdkhint";
-import { Footer } from "@/components/footer";
-import HeroSection from "@/components/HeroSection";
-import RecentBlogs from "@/components/RecentBlogs";
+import AboutSection from "@/components/client/AboutSection";
+import { BackToTop } from "@/components/client/backtotop";
+import { CmdKHint } from "@/components/client/cmdkhint";
+import { Footer } from "@/components/client/footer";
+import HeroSection from "@/components/client/HeroSection";
+import RecentBlogs from "@/components/client/RecentBlogs";
 import { BackgroundBeams } from "@/components/ui/background-beams";
 import { GitFork, Star, ArrowRight, Github } from "lucide-react";
 import Image from "next/image";
@@ -116,11 +116,7 @@ export default function Home() {
               </Link>
             </div>
             <div className="text-center mt-10">
-              <Link
-                target="_blank"
-                rel="noopener noreferrer"
-                href=""
-              >
+              <Link target="_blank" rel="noopener noreferrer" href="">
                 <button
                   title="view all repositories"
                   className="backdrop-blur-sm inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 h-10 rounded-md px-6 has-[&gt;svg]:px-4 gap-2"

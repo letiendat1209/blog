@@ -35,6 +35,7 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
+
 // NOTE TECH ? MAYBE =))
 
 FE: Next.js + Tailwind + shadcn/ui
@@ -43,3 +44,52 @@ DB: PostgreSQL (hoặc Supabase serverless)
 Auth: NextAuth.js
 Hosting: Vercel
 Security: DOMPurify + helmet + rate limit
+
+
+src/
+├── app/
+│   ├── (client)/                 # Route group cho client
+│   │   ├── layout.tsx            # Layout riêng cho client
+│   │   ├── page.tsx              # Trang chủ
+│   │   ├── blog/
+│   │   │   ├── page.tsx          # Danh sách bài viết
+│   │   │   └── [slug]/
+│   │   │       └── page.tsx      # Chi tiết bài viết
+│   │   ├── about/
+│   │   │   └── page.tsx
+│   │   └── contact/
+│   │       └── page.tsx
+│   │
+│   ├── (admin)/                  # Route group cho admin
+│   │   ├── layout.tsx            # Layout riêng cho admin
+│   │   ├── admin/
+│   │   │   ├── page.tsx          # Dashboard
+│   │   │   ├── posts/
+│   │   │   │   ├── page.tsx      # Quản lý bài viết
+│   │   │   │   ├── create/
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── [id]/
+│   │   │   │       └── edit/
+│   │   │   │           └── page.tsx
+│   │   │   └── settings/
+│   │   │       └── page.tsx
+│   │
+│   ├── layout.tsx                # Root layout chung
+│   └── globals.css
+│
+├── components/
+│   ├── client/                   # Components cho client
+│   │   ├── Header.tsx
+│   │   ├── Footer.tsx
+│   │   └── BlogCard.tsx
+│   │
+│   ├── admin/                    # Components cho admin
+│   │   ├── Sidebar.tsx
+│   │   ├── AdminNav.tsx
+│   │   └── PostEditor.tsx
+│   │
+│   └── shared/                   # Components dùng chung
+│       └── Button.tsx
+│
+└── lib/                          # Utils, API calls, etc.
+    └── api.ts

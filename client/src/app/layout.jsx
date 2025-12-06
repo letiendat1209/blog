@@ -1,7 +1,6 @@
 import { JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "@/app/globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
-import { Navbar } from "@/components/navbar";
+import { ThemeProvider } from "@/components/client/theme-provider";
 
 const jet = JetBrains_Mono({
   subsets: ["latin"],
@@ -21,7 +20,6 @@ export default function RootLayout({ children }) {
     <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <body className={`${jakarta.variable} ${jet.variable} antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <Navbar />
           {children}
         </ThemeProvider>
       </body>

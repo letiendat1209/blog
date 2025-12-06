@@ -3,6 +3,9 @@ import { useState } from "react";
 import { Menu, X, Search, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
+import { Button } from "../ui/button";
+import { Settings } from "lucide-react";
+import { Input } from "../ui/input";
 
 const menuLinks = ["project", "blogs", "photo", "about", "contact"];
 export const Navbar = () => {
@@ -41,37 +44,29 @@ export const Navbar = () => {
           <form className="hidden md:block">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none z-10" />
-              <input
-                type="search"
+              <Input
                 className="flex rounded-md border border-input bg-background backdrop-blur-sm px-3 py-2 text-sm pl-10 h-9 w-64"
                 placeholder="Search..."
               />
             </div>
           </form>
 
-          <Link
-            className="backdrop-blur-sm hidden sm:flex items-center justify-center gap-2 rounded-md text-sm font-medium px-4 py-2 hover:bg-accent transition"
-            href="/login"
-          >
-            Log In
-          </Link>
+          <Button variant="ghost">
+            <Link href="/login">Login</Link>
+          </Button>
 
-          <button
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="p-2 hover:bg-accent rounded-full text-muted-foreground transition-all duration-300 cursor-pointer group"
+          <Button
+            className="rounded-3xl hover:bg-accent text-muted-foreground transition-all duration-300 cursor-pointer group"
+            variant="ghost"
+            size="icon"
+            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
           >
-            {theme === "dark" ? (
-              <Sun
-                size={16}
-                className="text-yellow-400 transition-all duration-300 group-hover:rotate-90 group-hover:scale-110 group-hover:text-yellow-300"
-              />
+            {theme === "light" ? (
+              <Moon className="text-slate-700 transition-all duration-300 group-hover:rotate-[-15deg] group-hover:scale-110 group-hover:text-blue-500" />
             ) : (
-              <Moon
-                size={16}
-                className="text-slate-700 transition-all duration-300 group-hover:rotate-[-15deg] group-hover:scale-110 group-hover:text-blue-500"
-              />
+              <Sun className="text-yellow-400 transition-all duration-300 group-hover:rotate-90 group-hover:scale-110 group-hover:text-yellow-300" />
             )}
-          </button>
+          </Button>
 
           {/* Toggle menu button */}
           <button
