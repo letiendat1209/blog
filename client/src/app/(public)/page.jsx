@@ -14,7 +14,7 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen font-sans bg-background text-foreground relative">
       <div className="absolute inset-0 z-0 overflow-hidden">
-        <BackgroundBeams className="w-full h-full" />
+        <BackgroundBeams className="w-full h-screen" />
       </div>
       <div className="absolute inset-0 z-5 pointer-events-none" />
       <main className="flex-1 relative z-10">
@@ -66,7 +66,7 @@ export default function Home() {
               >
                 <Image
                   fill
-                  alt="Lê Tiến Đạt"
+                  alt="project"
                   src="https://images.unsplash.com/photo-1542435503-956c469947f6?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />

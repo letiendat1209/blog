@@ -27,6 +27,7 @@ export default function AboutSection() {
         Xin chào, tớ là Lê Tiến Đạt (bot), sinh viên chuyên ngành Kỹ thuật phần
         mềm tại Đại học Nguyễn Tất Thành...
       </div>
+      
     </section>
   );
 }
