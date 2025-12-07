@@ -1,6 +1,7 @@
 import { JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "@/app/globals.css";
 import { ThemeProvider } from "@/components/client/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 
 const jet = JetBrains_Mono({
   subsets: ["latin"],
@@ -21,6 +22,7 @@ export default function RootLayout({ children }) {
       <body className={`${jakarta.variable} ${jet.variable} antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {children}
+          <Toaster position="top-right" />
         </ThemeProvider>
       </body>
     </html>

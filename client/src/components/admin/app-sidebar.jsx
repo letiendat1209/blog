@@ -30,14 +30,13 @@ export function AppSidebar({ ...props }) {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                <logo className="size-4">
-                  <Image
+                <Image
+                    className="p-2"
                     width={32}
                     height={32}
                     src="/vercel.svg"
                     alt="avatar"
                   />
-                </logo>
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">Lê Tiến Đạt</span>

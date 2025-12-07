@@ -1,0 +1,77 @@
+import { useRef, useState } from "react";
+import { cn } from "@/lib/utils";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+export function LongText({ children, className = "", contentClassName = "" }) {
+  const ref = useRef(null);
+  const [isOverflown, setIsOverflown] = useState(false);
+
+  const refCallback = (node) => {
+    ref.current = node;
+    if (node && checkOverflow(node)) {
+      queueMicrotask(() => setIsOverflown(true));
+    }
+  };
+
+  if (!isOverflown) {
+    return (
+      <div ref={refCallback} className={cn("truncate", className)}>
+        {children}
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {/* desktop */}
+      <div className="hidden sm:block">
+        <TooltipProvider delayDuration={0}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div ref={refCallback} className={cn("truncate", className)}>
+                {children}
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p className={contentClassName}>{children}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+
+      {/* mobile */}
+      <div className="sm:hidden">
+        <Popover>
+          <PopoverTrigger asChild>
+            <div ref={refCallback} className={cn("truncate", className)}>
+              {children}
+            </div>
+          </PopoverTrigger>
+          <PopoverContent className={cn("w-fit", contentClassName)}>
+            <p>{children}</p>
+          </PopoverContent>
+        </Popover>
+      </div>
+    </>
+  );
+}
+
+function checkOverflow(textContainer) {
+  if (textContainer) {
+    return (
+      textContainer.offsetHeight < textContainer.scrollHeight ||
+      textContainer.offsetWidth < textContainer.scrollWidth
+    );
+  }
+  return false;
+}
