@@ -1,12 +1,13 @@
-"use client"
+"use client";
 
+import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible"
+} from "@/components/ui/collapsible";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -16,11 +17,14 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from "@/components/ui/sidebar"
+  useSidebar, // ⭐ THÊM HOOK NÀY
+} from "@/components/ui/sidebar";
+import { Button } from "../ui/button";
 
-export function NavMain({
-  items
-}) {
+export function NavMain({ items }) {
+  const { state } = useSidebar(); // ⭐ LẤY TRẠNG THÁI SIDEBAR
+  const isCollapsed = state === "collapsed";
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
@@ -30,24 +34,43 @@ export function NavMain({
             key={item.title}
             asChild
             defaultOpen={item.isActive}
-            className="group/collapsible">
+            className="group/collapsible"
+          >
             <SidebarMenuItem>
-              <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip={item.title}>
-                  {item.icon && <item.icon />}
-                  <span>{item.title}</span>
-                  <ChevronRight
-                    className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+              {/* ---- ITEM CHÍNH: NAY SẼ CLICK ĐƯỢC ---- */}
+              <div className="flex items-center">
+                <SidebarMenuButton asChild>
+                  <Link
+                    href={item.url}
+                    className="flex items-center gap-2 flex-1"
+                  >
+                    {item.icon && <item.icon />}
+                    <span>{item.title}</span>
+                  </Link>
                 </SidebarMenuButton>
-              </CollapsibleTrigger>
+
+                {/* ⭐ CHỈ HIỆN KHI KHÔNG COLLAPSED VÀ CÓ SUB ITEMS */}
+                {!isCollapsed && item.items?.length > 0 && (
+                  <CollapsibleTrigger asChild>
+                    <Button variant="ghost" size="sm" className="ml-1">
+                      <ChevronRight
+                        size={16}
+                        className="transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"
+                      />
+                    </Button>
+                  </CollapsibleTrigger>
+                )}
+              </div>
+
+              {/* ---- SUB MENU ---- */}
               <CollapsibleContent>
                 <SidebarMenuSub>
                   {item.items?.map((subItem) => (
                     <SidebarMenuSubItem key={subItem.title}>
                       <SidebarMenuSubButton asChild>
-                        <a href={subItem.url}>
+                        <Link href={subItem.url}>
                           <span>{subItem.title}</span>
-                        </a>
+                        </Link>
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                   ))}

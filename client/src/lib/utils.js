@@ -46,3 +46,29 @@ export function getPageNumbers(currentPage, totalPages) {
 
   return rangeWithDots;
 }
+
+export async function createCroppedImage(imageSrc, pixelCrop) {
+  const img = new Image();
+  img.src = imageSrc;
+  await img.decode();
+
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
+  canvas.width = pixelCrop.width;
+  canvas.height = pixelCrop.height;
+
+  ctx.drawImage(
+    img,
+    pixelCrop.x,
+    pixelCrop.y,
+    pixelCrop.width,
+    pixelCrop.height,
+    0,
+    0,
+    pixelCrop.width,
+    pixelCrop.height
+  );
+
+  return canvas.toDataURL("image/jpeg");
+}

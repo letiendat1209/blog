@@ -29,8 +29,9 @@ export default function RootLayout({ children }) {
         <SidebarProvider>
           <AppSidebar />
           <SidebarInset>
-            <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-              <div className="flex items-center gap-2 px-4">
+            {/* Fixed Header */}
+            <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center gap-2 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+              <div className="flex items-center gap-2 px-4 w-full">
                 <SidebarTrigger className="-ml-1" />
                 <Separator
                   orientation="vertical"
@@ -49,38 +50,42 @@ export default function RootLayout({ children }) {
                     </BreadcrumbItem>
                   </BreadcrumbList>
                 </Breadcrumb>
-              </div>
-              <div className="ms-auto flex items-center space-x-4 pr-4">
-                <form className="hidden md:block">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none z-10" />
-                    <input
-                      type="search"
-                      className="flex rounded-md border border-input bg-background backdrop-blur-sm px-3 py-2 text-sm pl-10 h-9 w-64"
-                      placeholder="Search..."
-                    />
-                  </div>
-                </form>
-                <Button
-                  className="rounded-3xl"
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-                >
-                  {theme === "light" ? (
-                    <Moon className="text-slate-700 transition-all duration-300 group-hover:rotate-[-15deg] group-hover:scale-110 group-hover:text-blue-500" />
-                  ) : (
-                    <Sun className="text-yellow-400 transition-all duration-300 group-hover:rotate-90 group-hover:scale-110 group-hover:text-yellow-300" />
-                  )}
-                </Button>
-                <Button className="rounded-3xl" variant="ghost" size="icon">
-                  <Settings />
-                </Button>
+
+                {/* Right side controls */}
+                <div className="ml-auto flex items-center space-x-4">
+                  <form className="hidden md:block">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none z-10" />
+                      <input
+                        type="search"
+                        className="flex rounded-md border border-input bg-background backdrop-blur-sm px-3 py-2 text-sm pl-10 h-9 w-64"
+                        placeholder="Search..."
+                      />
+                    </div>
+                  </form>
+                  <Button
+                    className="rounded-3xl"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() =>
+                      setTheme(theme === "light" ? "dark" : "light")
+                    }
+                  >
+                    {theme === "light" ? (
+                      <Moon className="text-slate-700 transition-all duration-300 group-hover:rotate-[-15deg] group-hover:scale-110 group-hover:text-blue-500" />
+                    ) : (
+                      <Sun className="text-yellow-400 transition-all duration-300 group-hover:rotate-90 group-hover:scale-110 group-hover:text-yellow-300" />
+                    )}
+                  </Button>
+                  <Button className="rounded-3xl" variant="ghost" size="icon">
+                    <Settings />
+                  </Button>
+                </div>
               </div>
             </header>
-            <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-              {children}
-            </div>
+
+            {/* Content với padding top */}
+            <div className="flex flex-1 flex-col gap-4 p-4">{children}</div>
           </SidebarInset>
         </SidebarProvider>
       </ThemeProvider>

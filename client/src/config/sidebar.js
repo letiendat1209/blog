@@ -1,10 +1,11 @@
 import { HardDriveUploadIcon } from "lucide-react";
+import { Folder } from "lucide-react";
+import { Image } from "lucide-react";
+import { Mail } from "lucide-react";
 import { Group } from "lucide-react";
 import {
   Home,
   FileText,
-  Tag,
-  MessageSquare,
   Users,
   Settings,
 } from "lucide-react";
@@ -21,19 +22,23 @@ export const SidebarItems = {
       title: "Dashboard",
       url: "/admin",
       icon: Home,
-      isActive: true,
       items: [],
     },
     {
-      title: "Posts",
+      title: "Blogs",
       url: "/admin/posts",
       icon: FileText,
       items: [
         { title: "All Posts", url: "/admin/posts" },
         { title: "Add New", url: "/admin/posts/new" },
-        { title: "Categories", url: "/admin/posts/categories" },
         { title: "Tags", url: "/admin/posts/tags" },
       ],
+    },
+    {
+      title: "Project",
+      url: "/admin/projects",
+      icon: Folder,
+      items: [],
     },
     {
       title: "Comment",
@@ -42,9 +47,15 @@ export const SidebarItems = {
       items: [],
     },
     {
-      title: "Comments",
-      url: "/admin/comments",
-      icon: MessageSquare,
+      title: "Contact",
+      url: "/admin/contacts",
+      icon: Mail,
+      items: [],
+    },
+    {
+      title: "Photo",
+      url: "/admin/photos",
+      icon: Image,
       items: [],
     },
     {
