@@ -162,3 +162,61 @@
   background: #3b82f6;
   color: white;
 }
+
+
+/* Smooth animation cho comment mới */
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Smooth animation cho reply form */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    max-height: 500px;
+    transform: translateY(0);
+  }
+}
+
+/* Apply cho comments */
+.comment-enter {
+  animation: slideInFromRight 0.3s ease-out;
+}
+
+/* Apply cho reply form (nếu cần) */
+.reply-form-enter {
+  animation: slideDown 0.2s ease-out;
+}
+
+/* Smooth opacity transition */
+.comment-card {
+  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.comment-card.optimistic {
+  opacity: 0.6;
+}
+
+/* Smooth hover effects */
+.comment-action-btn {
+  transition: color 0.15s ease-in-out;
+}
+
+.comment-action-btn:hover {
+  color: hsl(var(--primary));
+}
+

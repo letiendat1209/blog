@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import useDialogState from "@/hooks/use-dialog-state";
+import useDialogState from "@/hooks/UI/use-dialog-state";
 
 const PostsContext = React.createContext(null);
 
@@ -14,7 +14,7 @@ export function PostsProvider({ children }) {
   );
 }
 
-export const usePosts = () => {
+export const usePostsUI = () => {
   const context = React.useContext(PostsContext);
 
   if (!context) {

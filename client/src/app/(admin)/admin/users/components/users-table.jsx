@@ -12,8 +12,8 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import { cn } from "@/lib/utils";
-import { useTableUrlState } from "@/hooks/use-table-url-state";
+import { cn } from "@/utils/utils";
+import { useTableUrlState } from "@/hooks/UI/use-table-url-state";
 
 import {
   Table,

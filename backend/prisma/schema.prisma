@@ -1,0 +1,288 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+//
+// ========================
+// ENUMS
+// ========================
+//
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+enum UserStatus {
+  ACTIVE
+  BANNED
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum EntityType {
+  POST
+  PROJECT
+  PHOTO
+  COMMENT
+}
+
+enum ReactionType {
+  UPVOTE
+  LIKE
+  HEART
+  HAHA
+  STAR
+}
+
+//
+// ========================
+// USER & AUTH (SIMPLIFIED)
+// ========================
+//
+
+model User {
+  id String @id @default(uuid())
+
+  // CHỈ CẦN CƠ BẢN
+  email     String  @unique
+  name      String? // Lấy từ OAuth
+  avatarUrl String? // Lấy từ OAuth
+
+  role   UserRole   @default(USER)
+  status UserStatus @default(ACTIVE)
+
+  accounts Account[] // Google, GitHub
+  sessions Session[]
+
+  posts           Post[]
+  comments        Comment[]  @relation("UserComments")
+  repliedComments Comment[]  @relation("ReplyToUser")
+  reactions       Reaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+}
+
+model Account {
+  id     String @id @default(uuid())
+  userId String
+
+  provider   String // "google" or "github"
+  providerId String // ID từ OAuth provider
+
+  // OAuth tokens
+  accessToken  String?   @db.Text
+  refreshToken String?   @db.Text
+  expiresAt    DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([provider, providerId])
+  @@index([userId])
+}
+
+model Session {
+  id        String  @id @default(uuid())
+  deviceId  String?
+  userAgent String?
+  ip        String?
+
+  tokenHash String   @unique
+  revoked   Boolean  @default(false)
+  expiresAt DateTime
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([tokenHash])
+}
+
+//
+// ========================
+// POST
+// ========================
+//
+
+model Post {
+  id String @id @default(uuid())
+
+  slug           String  @unique
+  title          String
+  seoTitle       String?
+  seoDescription String?
+
+  content          String
+  shortDescription String?
+  coverImage       String?
+
+  readTime   Int?
+  views      Int     @default(0)
+  isFeatured Boolean @default(false)
+
+  status      PostStatus @default(DRAFT)
+  publishedAt DateTime?
+  scheduledAt DateTime?
+
+  authorId   String
+  categoryId String?
+
+  author   User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  tags     PostTag[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, publishedAt])
+  @@index([authorId])
+}
+
+//
+// ========================
+// CATEGORY & TAG
+// ========================
+//
+
+model Category {
+  id   String @id @default(uuid())
+  name String @unique
+  slug String @unique
+
+  posts Post[]
+
+  createdAt DateTime @default(now())
+}
+
+model Tag {
+  id   String @id @default(uuid())
+  name String @unique
+  slug String @unique
+
+  posts PostTag[]
+}
+
+model PostTag {
+  postId String
+  tagId  String
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag  Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([postId, tagId])
+}
+
+//
+// ========================
+// COMMENT (THREAD-ONLY REPLY)
+// ========================
+//
+
+model Comment {
+  id      String @id @default(uuid())
+  content String
+
+  displayName String?
+
+  userId String?
+  user   User?   @relation("UserComments", fields: [userId], references: [id], onDelete: SetNull)
+
+  guestId String?
+
+  entityId   String // id của cmt này hướng tới, ví dụ cmt vào 1 bài viết thì entityId là id bài viết đó
+  entityType EntityType // kiểu cmt : ảnh,bài viết, hay project đại loại z
+
+  parentId String? // id của cmt cha, để reply cmt 
+  parent   Comment?  @relation("Thread", fields: [parentId], references: [id], onDelete: Cascade)
+  replies  Comment[] @relation("Thread")
+
+  replyToGuestName String?
+  replyToUserId    String? // id của chủ cmt nào đó
+  replyToUser      User?   @relation("ReplyToUser", fields: [replyToUserId], references: [id], onDelete: SetNull)
+
+  isDeleted      Boolean   @default(false)
+  deletedAt      DateTime?
+  isShadowBanned Boolean   @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([entityType, entityId])
+  @@index([parentId])
+  @@index([replyToUserId])
+  @@index([guestId])
+}
+
+//
+// ========================
+// REACTION (FULL POLYMORPHIC)
+// ========================
+//
+
+model Reaction {
+  id   String       @id @default(uuid())
+  type ReactionType
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  entityId   String
+  entityType EntityType
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, entityType, entityId, type])
+  @@index([entityType, entityId])
+}
+
+//
+// ========================
+// PROJECT
+// ========================
+//
+
+model Project {
+  id               String  @id @default(uuid())
+  name             String
+  description      String?
+  shortDescription String?
+  coverImage       String?
+  liveDemoUrl      String?
+  githubUrl        String?
+  tech             String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+//
+// ========================
+// PHOTO
+// ========================
+//
+
+model Photo {
+  id    String  @id @default(uuid())
+  url   String
+  title String?
+
+  createdAt DateTime @default(now())
+}

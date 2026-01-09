@@ -1,45 +1,52 @@
 import { ConfirmDialog } from "@/components/confirm-dialog";
-import { usePosts } from "./posts-provider";
+import { usePostsUI } from "./posts-provider";
+import { toast } from "sonner";
+// import { useDeletePost } from "@/hooks/posts/usePost"; // nếu có
 
 export function PostsDialogs() {
-  const { open, setOpen, currentRow, setCurrentRow } = usePosts();
+  const { open, setOpen, currentRow, setCurrentRow } = usePostsUI();
+  // const { deletePostAsync } = useDeletePost();
+
+  const handleClose = () => {
+    setOpen(null);
+    setTimeout(() => {
+      setCurrentRow(null);
+    }, 300);
+  };
+
+  const handleDelete = async () => {
+    try {
+      // await deletePostAsync(currentRow.id);
+
+      toast.success("Xóa bài viết thành công 🗑️");
+      handleClose();
+    } catch (err) {
+      console.error(err);
+      toast.error("Xóa bài viết thất bại 💀");
+    }
+  };
+
+  if (!currentRow) return null;
+
   return (
-    <>
-      {currentRow && (
+    <ConfirmDialog
+      destructive
+      open={open === "delete"}
+      onOpenChange={(isOpen) => {
+        if (!isOpen) handleClose();
+      }}
+      handleConfirm={handleDelete}
+      className="max-w-md"
+      title={`Delete this post: ${currentRow.id}?`}
+      desc={
         <>
-          <ConfirmDialog
-            key="task-delete"
-            destructive
-            open={open === "delete"}
-            onOpenChange={() => {
-              setOpen("delete");
-              setTimeout(() => {
-                setCurrentRow(null);
-              }, 500);
-            }}
-            handleConfirm={() => {
-              setOpen(null);
-              setTimeout(() => {
-                setCurrentRow(null);
-              }, 500);
-              showSubmittedData(
-                currentRow,
-                "The following task has been deleted:"
-              );
-            }}
-            className="max-w-md"
-            title={`Delete this task: ${currentRow.id} ?`}
-            desc={
-              <>
-                You are about to delete a task with the ID{" "}
-                <strong>{currentRow.id}</strong>. <br />
-                This action cannot be undone.
-              </>
-            }
-            confirmText="Delete"
-          />
+          You are about to delete a post with ID{" "}
+          <strong>{currentRow.id}</strong>.
+          <br />
+          This action cannot be undone.
         </>
-      )}
-    </>
+      }
+      confirmText="Delete"
+    />
   );
 }

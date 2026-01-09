@@ -14,7 +14,7 @@ export const SidebarItems = {
   user: {
     name: "Admin",
     email: "admin@example.com",
-    avatar: "/avatars/admin.png",
+    avatar: "",
   },
 
   navMain: [

@@ -59,17 +59,21 @@ export default function BlogActions({ onCancel, onSave, isSaving }) {
             </Tooltip>
 
             <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  disabled={isSaving}
-                  className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-accent transition-colors disabled:opacity-50 shrink-0"
-                >
-                  <Clock size={16} />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Save as draft</p>
-              </TooltipContent>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={onSave}
+                    disabled={isSaving}
+                    className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-accent"
+                  >
+                    <Clock size={16} />
+                  </button>
+                </TooltipTrigger>
+
+                <TooltipContent>
+                  <p>Save draft</p>
+                </TooltipContent>
+              </Tooltip>
             </Tooltip>
 
             <Tooltip>
@@ -98,11 +102,11 @@ export default function BlogActions({ onCancel, onSave, isSaving }) {
                 className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full transition-colors disabled:opacity-50 text-sm font-medium shrink-0"
               >
                 <Save size={14} />
-                {isSaving ? "..." : "Publish"}
+                {isSaving ? "..." : "Save"}
               </button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Publish blog post</p>
+              <p>Save blog post</p>
             </TooltipContent>
           </Tooltip>
         </div>

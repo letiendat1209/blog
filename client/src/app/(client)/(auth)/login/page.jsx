@@ -9,7 +9,7 @@ export default function LoginPage() {
       </div>
 
       <main className="flex-1 relative z-10">
-        <div className="container mx-auto px-4 py-12 md:py-24 max-w-4xl space-y-32">
+        <div className="container mx-auto px-4 md:py-4 max-w-4xl space-y-32">
           <LoginForm />
         </div>
       </main>

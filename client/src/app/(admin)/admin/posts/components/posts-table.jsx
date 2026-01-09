@@ -12,8 +12,8 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import { cn } from "@/lib/utils";
-import { useTableUrlState } from "@/hooks/use-table-url-state";
+import { cn } from "@/utils/utils";
+import { useTableUrlState } from "@/hooks/UI/use-table-url-state";
 
 import {
   Table,
@@ -33,7 +33,6 @@ import { DataTableBulkActions } from "./bulk-actions";
 import { postsColumns as columns } from "./posts-columns";
 import { statuses } from "../data/data";
 
-
 export function PostsTable({ data, search, navigate }) {
   // Local UI states
   const [rowSelection, setRowSelection] = useState({});
@@ -52,9 +51,7 @@ export function PostsTable({ data, search, navigate }) {
     navigate,
     pagination: { defaultPage: 1, defaultPageSize: 10 },
     globalFilter: { enabled: false },
-    columnFilters: [
-      { columnId: "status", searchKey: "status", type: "array" },
-    ],
+    columnFilters: [{ columnId: "status", searchKey: "status", type: "array" }],
   });
 
   const table = useReactTable({
@@ -100,7 +97,7 @@ export function PostsTable({ data, search, navigate }) {
             columnId: "status",
             title: "Status",
             options: statuses,
-          }
+          },
         ]}
       />
 

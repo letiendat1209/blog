@@ -2,12 +2,6 @@ import { CheckCircle } from "lucide-react";
 import { LineSquiggle } from "lucide-react";
 import { CircleOff } from "lucide-react";
 import { Timer } from "lucide-react";
-import {
-  ArrowDown,
-  ArrowRight,
-  ArrowUp,
-  AlertCircle,
-} from "lucide-react";
 
 export const labels = [
   {
@@ -29,9 +23,19 @@ export const labels = [
 ];
 
 export const statuses = [
-  { label: "Draft", value: "draft", icon: LineSquiggle },
-  { label: "Scheduled", value: "scheduled", icon: Timer },
-  { label: "Published", value: "published", icon: CheckCircle },
-  { label: "Archived", value: "archived", icon: CircleOff },
+  {
+    value: "DRAFT",
+    label: "draft",
+    icon: LineSquiggle,
+  },
+  {
+    value: "PUBLISHED",
+    label: "published",
+    icon: CheckCircle,
+  },
+  {
+    value: "ACHIEVED",
+    label: "achieved",
+    icon: CircleOff,
+  },
 ];
-

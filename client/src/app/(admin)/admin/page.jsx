@@ -9,7 +9,7 @@ import {
   FileText,
 } from "lucide-react";
 
-export default function Page() {
+export default function AdminPage() {
   return (
     <>
       <h2 className="text-2xl font-bold tracking-tight">Dashboard</h2>

@@ -2,7 +2,7 @@
 import { Badge } from "@/components/ui/badge";
 import RowActions from "./row-action";
 import { Checkbox } from "@/components/ui/checkbox";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/utils";
 import { DataTableColumnHeader } from "@/components/shared/data-table";
 import { LongText } from "@/components/ui/long-text";
 import { Shield } from "lucide-react";
@@ -44,10 +44,7 @@ export const usersColumns = [
     ),
     cell: ({ row }) => (
       <Avatar className="h-9 w-9">
-        <AvatarImage
-          src={row.original.avatarUrl}
-          alt={row.original.username}
-        />
+        <AvatarImage src={row.original.avatarUrl} alt={row.original.username} />
         <AvatarFallback className="bg-muted">
           <Users className="h-4 w-4" />
         </AvatarFallback>

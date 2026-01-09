@@ -22,6 +22,7 @@ import {
   ChevronDown,
   CheckSquare,
   Code2,
+  Play,
 } from "lucide-react";
 import { Toggle } from "@/components/ui/toggle";
 import {
@@ -31,77 +32,77 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import { useCallback } from "react"; // ✅ Thêm import useCallback
 import { Divider } from "../ui/divider";
-import { Play } from "lucide-react";
 import { addYoutubeWithSonner } from "./youtube-dialog";
+import { toast } from "sonner";
+import { useUploadImage } from "@/hooks/uploads/useUpload";
+import { Loader2 } from "lucide-react";
+import { ImageIcon } from "lucide-react";
 
 export default function MenuBar({ editor }) {
-  const [, forceUpdate] = useState({});
+  
+  const { uploadImage, isLoading } = useUploadImage();
 
-  useEffect(() => {
-    if (!editor) return;
+  const handleImageUpload = useCallback(() => {
+    if (isLoading) return;
 
-    const updateHandler = () => {
-      forceUpdate({});
-    };
-
-    editor.on("selectionUpdate", updateHandler);
-    editor.on("transaction", updateHandler);
-
-    return () => {
-      editor.off("selectionUpdate", updateHandler);
-      editor.off("transaction", updateHandler);
-    };
-  }, [editor]);
-
-  if (!editor) {
-    return null;
-  }
-
-  // Handle image upload
-  const handleImageUpload = () => {
     const input = document.createElement("input");
     input.type = "file";
     input.accept = "image/*";
-    input.onchange = (e) => {
-      const file = e.target.files?.[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          const url = event.target?.result;
-          if (url) {
-            try {
-              if (editor.chain().focus().setImage) {
-                editor.chain().focus().setImage({ src: url }).run();
-              } else {
-                console.error("Image extension not installed");
-                alert(
-                  "Image extension is not available. Please install @tiptap/extension-image"
-                );
-              }
-            } catch (error) {
-              console.error("Error inserting image:", error);
-            }
-          }
-        };
-        reader.readAsDataURL(file);
-      }
-    };
-    input.click();
-  };
-  const handleAddYoutube = () => {
-  addYoutubeWithSonner(editor);
-};
 
+    input.onchange = async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      if (file.size > 5 * 1024 * 1024) {
+        toast("Ảnh không được vượt quá 5MB");
+        return;
+      }
+
+      if (!file.type.startsWith("image/")) {
+        toast("Vui lòng chọn file ảnh hợp lệ");
+        return;
+      }
+
+      try {
+        const toastId = toast.loading("Đang upload ảnh...");
+
+        const imageUrl = await uploadImage(file);
+
+        toast.dismiss(toastId);
+
+        editor.chain().focus().setImage({ src: imageUrl }).run();
+      } catch (err) {
+        toast.dismiss();
+        console.error(err);
+        toast("Có lỗi khi upload ảnh");
+      }
+
+    };
+
+    input.click();
+  }, [editor, uploadImage, isLoading]);
+
+
+  const handleAddYoutube = useCallback(() => {
+    if (!editor) return;
+    addYoutubeWithSonner(editor);
+  }, [editor]);
 
   // Handle link
-  const handleSetLink = () => {
+  const handleSetLink = useCallback(() => {
+    if (!editor) return;
     const url = window.prompt("Enter URL:");
     if (url) {
       editor.chain().focus().setLink({ href: url }).run();
     }
-  };
+  }, [editor]);
+
+  // ✅ Early return SAU khi đã khai báo tất cả hooks
+  if (!editor) {
+    return null;
+  }
 
   // Render Undo/Redo group
   const renderUndoRedo = () => (
@@ -389,11 +390,17 @@ export default function MenuBar({ editor }) {
       <Toggle
         pressed={false}
         onPressedChange={handleImageUpload}
+        disabled={isLoading}
         className="h-8 w-8 p-0"
         title="Add Image"
       >
-        <Image alt="Add Image" className="h-4 w-4" />
+        {isLoading ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : (
+          <ImageIcon className="h-4 w-4" />
+        )}
       </Toggle>
+
       <Toggle
         pressed={false}
         onPressedChange={handleAddYoutube}

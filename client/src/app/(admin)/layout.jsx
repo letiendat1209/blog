@@ -18,10 +18,46 @@ import {
 } from "@/components/ui/sidebar";
 import { Sun, Moon, Settings, Search } from "lucide-react";
 import { useTheme } from "next-themes";
+// import AuthGuard from "@/components/auth/AuthGuard";
 import "@/app/globals.css";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useAuth } from "@/hooks/auths/useAuth";
 
-export default function RootLayout({ children }) {
+export default function AdminLayout({ children }) {
   const { theme, setTheme } = useTheme();
+  const { user, loading, error } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (loading) return;
+
+    // Không có user (refresh token expired)
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
+    // Có user nhưng không phải admin
+    if (user.role !== "ADMIN") {
+      router.push("/forbidden");
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <p>Đang xác thực...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user || user.role !== "ADMIN") {
+    return null; // Đang redirect
+  }
 
   return (
     <>

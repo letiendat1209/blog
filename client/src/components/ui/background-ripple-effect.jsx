@@ -1,6 +1,6 @@
 "use client";
 import React, { useMemo, useRef, useState, useEffect } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/utils";
 
 export const BackgroundRippleEffect = ({ cellSize = 56 }) => {
   const [clickedCell, setClickedCell] = useState(null);

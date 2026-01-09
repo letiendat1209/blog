@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Trash2, UserX, UserCheck, Mail } from "lucide-react";
 import { toast } from "sonner";
-import { sleep } from "@/lib/utils";
+import { sleep } from "@/utils/utils";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,

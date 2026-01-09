@@ -4,7 +4,7 @@ import {
   DoubleArrowLeftIcon,
   DoubleArrowRightIcon,
 } from "@radix-ui/react-icons";
-import { cn, getPageNumbers } from "@/lib/utils";
+import { cn, getPageNumbers } from "@/utils/utils";
 import { Button } from "@/components/ui/button";
 import {
   Select,

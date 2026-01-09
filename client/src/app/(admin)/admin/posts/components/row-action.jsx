@@ -16,14 +16,13 @@ import {
   DropdownMenuRadioItem,
 } from "@/components/ui/dropdown-menu";
 import { Trash2 } from "lucide-react";
-import { UserPen } from "lucide-react";
-import { usePosts } from "./posts-provider";
+import { usePostsUI } from "./posts-provider";
 import { labels } from "../data/data";
 import { useRouter } from "next/navigation";
 
 export default function RowActions({ row }) {
   const post = row.original;
-  const { setOpen, setCurrentRow } = usePosts();
+  const { setOpen, setCurrentRow } = usePostsUI();
   const router = useRouter();
   return (
     <>

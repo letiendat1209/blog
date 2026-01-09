@@ -17,17 +17,17 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-  useSidebar, // ⭐ THÊM HOOK NÀY
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { Button } from "../ui/button";
 
 export function NavMain({ items }) {
-  const { state } = useSidebar(); // ⭐ LẤY TRẠNG THÁI SIDEBAR
+  const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
+      <SidebarGroupLabel>Menu</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <Collapsible
@@ -49,7 +49,7 @@ export function NavMain({ items }) {
                   </Link>
                 </SidebarMenuButton>
 
-                {/* ⭐ CHỈ HIỆN KHI KHÔNG COLLAPSED VÀ CÓ SUB ITEMS */}
+                {/* CHỈ HIỆN KHI KHÔNG COLLAPSED VÀ CÓ SUB ITEMS */}
                 {!isCollapsed && item.items?.length > 0 && (
                   <CollapsibleTrigger asChild>
                     <Button variant="ghost" size="sm" className="ml-1">
