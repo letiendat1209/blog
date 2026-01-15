@@ -22,7 +22,7 @@ Một **Blog CMS dành cho developer**, nơi viết – đọc – tranh luận 
 ### Frontend
 
 * **Next.js** (App Router)
-* **TypeScript**
+* **JavaScript**
 * **Tailwind CSS** + **shadcn/ui**
 * Client / Server Components tách bạch
 * UX ưu tiên đọc lâu, không mỏi mắt
