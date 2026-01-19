@@ -1,22 +1,32 @@
 import Redis from "ioredis";
 
-export const redis = new Redis({
-  host: process.env.REDIS_HOST || "127.0.0.1",
-  port: Number(process.env.REDIS_PORT) || 6379,
-});
+let redis = null;
 
-redis.on("connect", () => {
-  console.log("✅ Redis connected");
-});
+if (process.env.REDIS_URL) {
+  redis = new Redis(process.env.REDIS_URL);
 
-redis.on("error", (err) => {
-  console.error("❌ Redis error:", err);
-});
+  redis.on("connect", () => {
+    console.log("✅ Redis connected");
+  });
+
+  redis.on("error", (err) => {
+    console.error("❌ Redis error:", err);
+  });
+} else {
+  console.log("⚠️ Redis disabled (no REDIS_URL)");
+}
+
+export { redis };
 
 /**
  * Tăng counter + set TTL nếu là lần đầu
  */
 export const incrWithTTL = async (key, ttlSeconds) => {
+  if (!redis) {
+    // fallback khi không có redis
+    return 1;
+  }
+
   const count = await redis.incr(key);
 
   if (count === 1) {
