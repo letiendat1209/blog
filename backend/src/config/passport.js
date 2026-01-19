@@ -19,6 +19,7 @@ if (GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET) {
         clientSecret: GOOGLE_CLIENT_SECRET,
         callbackURL: GOOGLE_CALLBACK_URL,
         scope: ["profile", "email"],
+        proxy: true,
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
@@ -47,8 +48,8 @@ if (GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET) {
         } catch (error) {
           return done(error, null);
         }
-      }
-    )
+      },
+    ),
   );
 } else {
   console.warn("⚠️  Google OAuth not configured");

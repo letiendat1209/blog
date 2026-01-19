@@ -23,6 +23,7 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 const allowedOrigins = [process.env.FRONTEND_URL, "http://localhost:3000"];
 
+app.enable("trust proxy");
 // ============================================
 // CORS Configuration (QUAN TRỌNG cho OAuth)
 // ============================================
