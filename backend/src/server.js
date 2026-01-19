@@ -14,6 +14,8 @@ import tagRouters from "./routes/tagRoutes.js";
 import reactionRouters from "./routes/reactionRoutes.js";
 
 import { startCronJobs } from "./cron/index.js";
+import session from "express-session";
+
 
 config();
 connectDB();
@@ -24,6 +26,22 @@ const PORT = process.env.PORT || 5001;
 const allowedOrigins = [process.env.FRONTEND_URL, "http://localhost:3000"];
 
 app.enable("trust proxy");
+// ============================================
+// SESSION CONFIG (THÊM ĐOẠN NÀY VÀO)
+// ============================================
+// Bắt buộc phải có để Passport lưu 'state' check CSRF
+app.use(session({
+  secret: process.env.SESSION_SECRET || "bi_mat_khong_the_bat_mi",
+  resave: false,
+  saveUninitialized: false,
+  proxy: true, // <--- BẮT BUỘC cho Render
+  cookie: {
+    secure: true, // <--- BẮT BUỘC vì Render chạy HTTPS
+    sameSite: "none", // <--- BẮT BUỘC để cookie chui qua được Vercel <-> Render
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000 // 1 ngày
+  }
+}));
 // ============================================
 // CORS Configuration (QUAN TRỌNG cho OAuth)
 // ============================================
