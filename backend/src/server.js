@@ -22,15 +22,24 @@ startCronJobs();
 
 const app = express();
 const PORT = process.env.PORT || 5001;
-
+const allowedOrigins = [
+  process.env.FRONTEND_URL || "http://localhost:3000",
+];
 // ============================================
 // CORS Configuration (QUAN TRỌNG cho OAuth)
 // ============================================
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
-    credentials: true, // Cho phép gửi cookies
-  })
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true); // Postman / server-to-server
+      if (allowedOrigins.includes(origin)) {
+        callback(null, origin); // trả đúng 1 origin
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  }),
 );
 // ============================================
 // Body parsing middleware
