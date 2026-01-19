@@ -25,7 +25,7 @@ const PORT = process.env.PORT || 5001;
 // ============================================
 // CORS Configuration (PROD-READY, KHÔNG HARDCODE)
 // ============================================
-const allowedOrigins = (process.env.FRONTEND_URLS || "http://localhost:3000")
+const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:3000")
   .split(",")
   .map((origin) => origin.trim());
 
