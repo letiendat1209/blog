@@ -10,11 +10,10 @@ import userRouters from "./routes/userRoutes.js";
 import postRouters from "./routes/postRoutes.js";
 import commentRouters from "./routes/commentRoutes.js";
 import uploadRouters from "./routes/uploadRoutes.js";
-import tagRouters from "./routes/tagRoutes.js"
-import reactionRouters from "./routes/reactionRoutes.js"
+import tagRouters from "./routes/tagRoutes.js";
+import reactionRouters from "./routes/reactionRoutes.js";
 
 import { startCronJobs } from "./cron/index.js";
-
 
 config();
 connectDB();
@@ -43,9 +42,11 @@ app.use(
 // ============================================
 // Body parsing middleware
 // ============================================
-app.use(express.json({
-  limit: "10mb",
-}));
+app.use(
+  express.json({
+    limit: "10mb",
+  }),
+);
 app.use(cookieParser());
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
@@ -68,7 +69,7 @@ app.use("/users", userRouters);
 app.use("/post", postRouters);
 app.use("/comments", commentRouters);
 app.use("/tags", tagRouters);
-app.use("/reactions", reactionRouters)
+app.use("/reactions", reactionRouters);
 
 // ============================================
 // Health check endpoint

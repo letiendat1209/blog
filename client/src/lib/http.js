@@ -28,20 +28,6 @@ const NO_REFRESH_ERROR_CODES = [
   "ACCOUNT_LOCKED",
   "ACCOUNT_DELETED",
 ];
-/* ================= REQUEST INTERCEPTOR ================= */
-http.interceptors.request.use(
-  (config) => {
-    if (typeof window !== "undefined") {
-      const accessToken = localStorage.getItem("accessToken");
-
-      if (accessToken) {
-        config.headers.Authorization = `Bearer ${accessToken}`;
-      }
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
 
 /* ================= RESPONSE INTERCEPTOR ================= */
 http.interceptors.response.use(
@@ -50,7 +36,7 @@ http.interceptors.response.use(
     const originalRequest = error.config;
 
     // Không retry nếu là refresh endpoint
-    if (originalRequest?.url === "/auth/refresh") {
+    if (originalRequest?.url?.includes("/auth/refresh")) {
       return Promise.reject(error);
     }
 
