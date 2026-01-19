@@ -10,11 +10,10 @@ import userRouters from "./routes/userRoutes.js";
 import postRouters from "./routes/postRoutes.js";
 import commentRouters from "./routes/commentRoutes.js";
 import uploadRouters from "./routes/uploadRoutes.js";
-import tagRouters from "./routes/tagRoutes.js"
-import reactionRouters from "./routes/reactionRoutes.js"
+import tagRouters from "./routes/tagRoutes.js";
+import reactionRouters from "./routes/reactionRoutes.js";
 
 import { startCronJobs } from "./cron/index.js";
-
 
 config();
 connectDB();
@@ -24,28 +23,42 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 
 // ============================================
-// CORS Configuration (QUAN TRỌNG cho OAuth)
+// CORS Configuration (PROD-READY, KHÔNG HARDCODE)
 // ============================================
+const allowedOrigins = (process.env.FRONTEND_URLS || "http://localhost:3000")
+  .split(",")
+  .map((origin) => origin.trim());
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
-    credentials: true, // Cho phép gửi cookies
-  })
+    origin: (origin, callback) => {
+      // Cho phép request không có origin (Postman, server-to-server, cron)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`CORS blocked: ${origin}`));
+      }
+    },
+    credentials: true,
+  }),
 );
 
+// ============================================
+// Static / Upload
+// ============================================
 app.use("/upload", uploadRouters);
 
 // ============================================
 // Body parsing middleware
 // ============================================
-app.use(express.json({
-  limit: "10mb",
-}));
+app.use(express.json({ limit: "10mb" }));
 app.use(cookieParser());
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
 // ============================================
-// Serve static files (cho test page)
+// Serve static files (cho test OAuth page)
 // ============================================
 app.use(express.static("public"));
 
@@ -62,7 +75,7 @@ app.use("/users", userRouters);
 app.use("/post", postRouters);
 app.use("/comments", commentRouters);
 app.use("/tags", tagRouters);
-app.use("/reactions", reactionRouters)
+app.use("/reactions", reactionRouters);
 
 // ============================================
 // Health check endpoint
@@ -108,7 +121,6 @@ const server = app.listen(PORT, () => {
   console.log("   ================================");
   console.log(`   Environment: ${process.env.NODE_ENV || "development"}`);
   console.log(`   Health check: http://localhost:${PORT}/health`);
-  console.log(`   Test OAuth: http://localhost:${PORT}/test-oauth.html`);
   console.log(`   Google OAuth: http://localhost:${PORT}/auth/google`);
   console.log(`   GitHub OAuth: http://localhost:${PORT}/auth/github`);
   console.log("   ================================\n");
@@ -117,8 +129,6 @@ const server = app.listen(PORT, () => {
 // ============================================
 // Error Handlers
 // ============================================
-
-// Handle unhandled promise rejections
 process.on("unhandledRejection", (error) => {
   console.error("❌ Unhandled promise rejection:", error);
   server.close(async () => {
@@ -127,7 +137,6 @@ process.on("unhandledRejection", (error) => {
   });
 });
 
-// Handle uncaught exceptions
 process.on("uncaughtException", async (error) => {
   console.error("❌ Uncaught Exception:", error);
   server.close(async () => {
@@ -136,12 +145,10 @@ process.on("uncaughtException", async (error) => {
   });
 });
 
-// Graceful shutdown
 process.on("SIGTERM", async () => {
   console.log("\n⚠️  SIGTERM received, shutting down gracefully...");
   server.close(async () => {
     await disconnectDB();
-    console.log("✅ Server closed successfully");
     process.exit(0);
   });
 });
@@ -150,7 +157,6 @@ process.on("SIGINT", async () => {
   console.log("\n⚠️  SIGINT received, shutting down gracefully...");
   server.close(async () => {
     await disconnectDB();
-    console.log("✅ Server closed successfully");
     process.exit(0);
   });
 });
