@@ -22,7 +22,7 @@ router.post("/:id/view", trackPostView);
 router.post("/", authMiddleware, requireRole("ADMIN"), validate(createPostSchema), createPost);
 router.put("/:id", authMiddleware, requireRole("ADMIN"), validate(updatePostSchema), updatePost);
 router.post("/:id/publish", authMiddleware, requireRole("ADMIN"), publishPost);
-router.post("/:id/achieve", authMiddleware, requireRole("ADMIN"), archivePost);
+router.post("/:id/archive", authMiddleware, requireRole("ADMIN"), archivePost);
 
 
 export default router;

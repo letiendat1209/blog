@@ -14,7 +14,7 @@ import { toast } from "sonner";
 
 // Config
 const MENU_LINKS = [
-  { href: "/project", label: "Project" },
+  // { href: "/project", label: "Project" },
   { href: "/blogs", label: "Blogs" },
   { href: "/photo", label: "Photo" },
   { href: "/about", label: "About" },

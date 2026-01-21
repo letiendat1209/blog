@@ -10,7 +10,6 @@ export const getPosts = async ({ status, tags }) => {
   return res.data;
 };
 
-
 export const getPost = async (id) => {
   const res = await http.get(`/post/${id}`);
   return res.data;
@@ -31,6 +30,11 @@ export const archivePost = async (id) => {
   return res.data;
 };
 
+export const changePostStatus = async ({ id, action }) => {
+  const res = await http.post(`/post/${id}/${action}`);
+  return res.data;
+};
+
 export const updatePost = async (id, data) => {
   const res = await http.put(`/post/${id}`, data);
   return res.data;
@@ -46,4 +50,3 @@ export const trackPostView = async (postId) => {
   return res.data;
   // { ok: true, counted: true | false }
 };
-

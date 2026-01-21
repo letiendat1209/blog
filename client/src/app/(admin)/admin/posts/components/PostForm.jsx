@@ -7,36 +7,45 @@ import BlogActions from "../create/components/BlogActions";
 import BlogMetaForm from "../create/components/BlogMetaForm";
 import CoverImageUpload from "../create/components/CoverImageUpload";
 import { useUploadImage } from "@/hooks/uploads/useUpload";
-import { toast } from "sonner";
 import { useAuth } from "@/hooks/auths/useAuth";
+import { useUpdatePost } from "@/hooks/posts/usePost";
+import { useChangePostStatus } from "@/hooks/posts/useChangePostStatus";
+import { toast } from "sonner";
+import TagInput from "./TagInput";
 
-export default function PostForm({ initialData, onSave, onCancel, isSaving }) {
-  const { user: currentUser, loading } = useAuth();
+export default function PostForm({ initialData, onCancel }) {
+  const { user: currentUser, loading: loadingUser } = useAuth();
+  const { uploadImage, isLoading: isUploading } = useUploadImage();
+  const { updatePostAsync, loading: isUpdating } = useUpdatePost();
+  const { changeStatus } = useChangePostStatus();
+
+  const postId = initialData?.id;
+  const status = initialData?.status ?? "DRAFT";
 
   // cover image
   const [coverImage, setCoverImage] = useState(null);
   const [coverPreview, setCoverPreview] = useState(
-    initialData?.coverImage || null
+    initialData?.coverImage || null,
   );
 
-  // meta info
+  // meta
   const [meta, setMeta] = useState({
     title: initialData?.title || "",
     slug: initialData?.slug || "",
     shortDescription: initialData?.shortDescription || "",
     seoTitle: initialData?.seoTitle || "",
     seoDescription: initialData?.seoDescription || "",
+    tags: initialData?.tags || [], // 👈 thêm
   });
 
   // content
   const [content, setContent] = useState(initialData?.content || "");
 
-  // upload image hook
-  const { uploadImage, isLoading: isUploading } = useUploadImage();
+  const isProcessing = isUploading || isUpdating;
 
   const handleImageChange = (file, preview) => {
-    setCoverImage(file); // File (để upload)
-    setCoverPreview(preview); // URL (để preview)
+    setCoverImage(file);
+    setCoverPreview(preview);
   };
 
   const handleRemoveImage = () => {
@@ -44,39 +53,69 @@ export default function PostForm({ initialData, onSave, onCancel, isSaving }) {
     setCoverPreview(null);
   };
 
+  const buildPostData = async () => {
+    let coverImageUrl = coverPreview;
+
+    if (coverImage) {
+      const uploadedUrl = await uploadImage(coverImage);
+      if (!uploadedUrl) throw new Error("Upload image failed");
+      coverImageUrl = uploadedUrl;
+    }
+
+    return {
+      title: meta.title,
+      shortDescription: meta.shortDescription,
+      seoTitle: meta.seoTitle || "",
+      seoDescription: meta.seoDescription || "",
+      content,
+      coverImage: coverImageUrl,
+      tags: meta.tags,
+    };
+  };
+
   const handleSave = async () => {
+    if (!postId) {
+      toast.error("Không tìm thấy bài viết");
+      return;
+    }
+
     try {
-      let coverImageUrl = coverPreview;
+      const postData = await buildPostData();
 
-      // upload ảnh mới nếu có
-      if (coverImage) {
-        const uploadedUrl = await uploadImage(coverImage);
+      await updatePostAsync({
+        id: postId,
+        data: postData,
+      });
 
-        if (!uploadedUrl) {
-          throw new Error("Upload image failed");
-        }
-
-        coverImageUrl = uploadedUrl;
-      }
-
-      // backend auto-generate slug → FE KHÔNG gửi slug
-      const postData = {
-        title: meta.title,
-        shortDescription: meta.shortDescription,
-        seoTitle: meta.seoTitle || "",
-        seoDescription: meta.seoDescription || "",
-        content,
-        coverImage: coverImageUrl,
-      };
-
-      await onSave?.(postData);
-    } catch (error) {
-      console.error("Error saving post:", error);
-      toast.error("Có lỗi xảy ra khi lưu bài viết");
+      toast.success("Đã lưu bài viết 💾");
+    } catch (err) {
+      console.error(err);
+      toast.error("Lưu bài viết thất bại");
     }
   };
 
-  const isProcessing = isSaving || isUploading;
+  const handlePublish = async () => {
+    if (!postId) return;
+
+    try {
+      await handleSave();
+      await changeStatus({ id: postId, action: "publish" });
+      toast.success("Publish thành công 🚀");
+    } catch {
+      toast.error("Publish thất bại");
+    }
+  };
+
+  const handleArchive = async () => {
+    if (!postId) return;
+
+    try {
+      await changeStatus({ id: postId, action: "archive" });
+      toast.success("Đã archive bài viết");
+    } catch {
+      toast.error("Archive thất bại");
+    }
+  };
 
   return (
     <div className="min-h-screen w-full flex flex-col">
@@ -94,18 +133,29 @@ export default function PostForm({ initialData, onSave, onCancel, isSaving }) {
               meta={meta}
               onChange={setMeta}
               disabled={isProcessing}
-              disableSlug // 🔒 luôn khóa slug
+              disableSlug
             />
 
             <AuthorInfo
               author={initialData?.author ?? currentUser}
-              loading={!initialData?.author && loading}
+              loading={!initialData?.author && loadingUser}
             />
           </div>
 
           <RichTextEditor
             content={content}
             onChange={setContent}
+            disabled={isProcessing}
+          />
+          {/*Tas*/}
+          <TagInput
+            value={meta.tags}
+            onChange={(tags) =>
+              setMeta((prev) => ({
+                ...prev,
+                tags,
+              }))
+            }
             disabled={isProcessing}
           />
         </div>
@@ -115,8 +165,11 @@ export default function PostForm({ initialData, onSave, onCancel, isSaving }) {
         <div className="flex items-center justify-center py-4">
           <BlogActions
             onCancel={onCancel}
-            onSave={handleSave}
+            onSaveDraft={handleSave}
+            onPublish={handlePublish}
+            onArchive={handleArchive}
             isSaving={isProcessing}
+            status={status}
           />
         </div>
       </div>

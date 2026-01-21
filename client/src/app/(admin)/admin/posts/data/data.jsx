@@ -34,8 +34,8 @@ export const statuses = [
     icon: CheckCircle,
   },
   {
-    value: "ACHIEVED",
-    label: "achieved",
+    value: "ARCHIVED",
+    label: "archived",
     icon: CircleOff,
   },
 ];

@@ -1,10 +1,43 @@
 import { ArrowUp } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export const BackToTop = () => {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => {
+      setVisible(window.scrollY > 300);
+    };
+
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
   return (
-    <div className="fixed bottom-8 right-8 flex flex-col gap-4 z-50 items-end">
-      <button className="backdrop-blur-sm gap-2 whitespace-nowrap text-sm font-medium disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive px-4 py-2 has-[>svg]:px-3 w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg hover:bg-primary/90 transition-all duration-300 transform opacity-100 translate-y-0">
-        <ArrowUp size={16} />
+    <div className="fixed bottom-8 right-8 z-50">
+      <button
+        onClick={scrollToTop}
+        className={`
+          w-14 h-14 rounded-full flex items-center justify-center
+          bg-primary text-primary-foreground shadow-lg
+          transition-all duration-300
+          hover:bg-primary/90
+          ${
+            visible
+              ? "opacity-100 translate-y-0 pointer-events-auto"
+              : "opacity-0 translate-y-4 pointer-events-none"
+          }
+        `}
+        aria-label="Back to top"
+      >
+        <ArrowUp size={18} />
       </button>
     </div>
   );

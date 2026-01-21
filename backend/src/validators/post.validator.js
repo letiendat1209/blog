@@ -33,7 +33,7 @@ export const updatePostSchema = z.object({
 
       categoryId: z.string().optional(),
 
-      tagIds: z.array(z.string()).optional(),
+      tags: z.array(z.string()),
 
       // SEO
       slug: z.string().optional(),

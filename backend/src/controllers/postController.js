@@ -2,38 +2,46 @@ import { redis } from "../lib/redis.js";
 import { hashViewer } from "../utils/index.js";
 import { prisma } from "../config/prisma.js";
 import { calcReadTime, generateUniqueSlug } from "../utils/index.js";
+import slugify from "slugify";
 
 const VIEW_TTL = 60 * 60 * 6; // 6 tiếng
 
 export const createPost = async (req, res) => {
   const data = req.body;
+
   const slug = await generateUniqueSlug(data.title, prisma);
   const readTime = calcReadTime(data.content);
 
-  // 1️⃣ Chuẩn bị tags
+  // 1️⃣ Chuẩn hóa tags
   const tagNames = Array.isArray(data.tags)
-    ? data.tags.map((t) => t.trim())
+    ? data.tags.map((t) => t.trim()).filter(Boolean)
     : [];
 
-  // Tạo tags mới nếu chưa có
   const tagsData = tagNames.map((name) => ({
     name,
-    slug: name.toLowerCase().replace(/\s+/g, "-"),
+    slug: slugify(name, {
+      lower: true,
+      strict: true,
+      trim: true,
+    }),
   }));
 
+  // 2️⃣ Tạo tag nếu chưa có
   if (tagsData.length) {
     await prisma.tag.createMany({
       data: tagsData,
-      skipDuplicates: true, // tránh duplicate
+      skipDuplicates: true,
     });
   }
 
-  // Lấy tất cả tag hiện có (cả mới + cũ)
+  // 3️⃣ Lấy lại tag theo slug (chuẩn hơn name)
   const existingTags = await prisma.tag.findMany({
-    where: { name: { in: tagNames } },
+    where: {
+      slug: { in: tagsData.map((t) => t.slug) },
+    },
   });
 
-  // 2️⃣ Tạo post + connect tags
+  // 4️⃣ Tạo post + connect tag
   const post = await prisma.post.create({
     data: {
       title: data.title,
@@ -47,19 +55,20 @@ export const createPost = async (req, res) => {
       isFeatured: data.isFeatured ?? false,
       authorId: req.user.id,
       categoryId: data.categoryId,
-      tags: existingTags.length
-        ? {
-            create: existingTags.map((tag) => ({ tagId: tag.id })),
-          }
-        : undefined,
+      tags: {
+        create: existingTags.map((tag) => ({
+          tagId: tag.id,
+        })),
+      },
     },
     include: {
-      tags: { include: { tag: true } }, // trả kèm info tag
+      tags: { include: { tag: true } },
     },
   });
 
   res.status(201).json(post);
 };
+
 
 export const getPosts = async (req, res) => {
   try {
@@ -208,14 +217,45 @@ export const getPost = async (req, res) => {
 
 export const updatePost = async (req, res) => {
   const { id } = req.params;
-
   const data = req.body;
 
   const post = await prisma.post.findUnique({ where: { id } });
   if (!post) return res.sendStatus(404);
 
-  if (post.status !== "DRAFT") {
-    return res.status(400).json({ message: "Only draft can be edited" });
+  // 1️⃣ Chuẩn hóa tags
+  const tagNames = Array.isArray(data.tags)
+    ? data.tags.map((t) => t.trim()).filter(Boolean)
+    : null;
+
+  let tagUpdate = undefined;
+
+  if (tagNames) {
+    const tagsData = tagNames.map((name) => ({
+      name,
+      slug: slugify(name, {
+      lower: true,
+      strict: true,
+      trim: true,
+    }),
+    }));
+
+    await prisma.tag.createMany({
+      data: tagsData,
+      skipDuplicates: true,
+    });
+
+    const existingTags = await prisma.tag.findMany({
+      where: {
+        slug: { in: tagsData.map((t) => t.slug) },
+      },
+    });
+
+    tagUpdate = {
+      deleteMany: {}, // replace toàn bộ tag
+      create: existingTags.map((tag) => ({
+        tagId: tag.id,
+      })),
+    };
   }
 
   await prisma.post.update({
@@ -229,20 +269,14 @@ export const updatePost = async (req, res) => {
       seoTitle: data.seoTitle,
       seoDescription: data.seoDescription,
       isFeatured: data.isFeatured,
-
       readTime: data.content ? calcReadTime(data.content) : post.readTime,
-
-      tags: data.tagIds
-        ? {
-            deleteMany: {},
-            create: data.tagIds.map((tagId) => ({ tagId })),
-          }
-        : undefined,
+      tags: tagUpdate,
     },
   });
 
   res.sendStatus(204);
 };
+
 
 export const publishPost = async (req, res) => {
   const { id } = req.params;
