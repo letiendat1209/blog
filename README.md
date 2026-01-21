@@ -1,5 +1,5 @@
 # DevBlog CMS 🚀
-
+- ( Deploy free ở render nên lần đầu load sẽ hơi lâu - mình cũng tắt redis ở production nên ratelimit hay viewcout sẽ ko hoạt động ) - 
 Một **Blog CMS dành cho developer**, nơi viết – đọc – tranh luận kỹ thuật một cách văn minh nhưng không hề nhàm chán. Dự án này được xây như một playground nghiêm túc để mình rèn **Frontend + Backend + System thinking**.
 
 ## ✨ Mục tiêu dự án
