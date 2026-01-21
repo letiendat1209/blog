@@ -28,10 +28,26 @@ export default function SingleBlogPage({ slugAndId }) {
   useEffect(() => {
     if (blog?.content) {
       import("dompurify").then((DOMPurify) => {
-        setSanitizedContent(DOMPurify.default.sanitize(blog.content));
+        const clean = DOMPurify.default.sanitize(blog.content, {
+          ADD_TAGS: ["iframe"],
+          ADD_ATTR: [
+            "allow",
+            "allowfullscreen",
+            "frameborder",
+            "scrolling",
+            "src",
+            "width",
+            "height",
+          ],
+          ALLOWED_URI_REGEXP:
+            /^(?:(?:https?:)?\/\/)?(?:www\.)?(youtube\.com|youtu\.be)\/?/,
+        });
+
+        setSanitizedContent(clean);
       });
     }
   }, [blog?.content]);
+
 
   if (loading) {
     return (

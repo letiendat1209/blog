@@ -1,48 +1,53 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import RichTextEditor from "@/components/rich-text-editor/RichTextEditor";
 import AuthorInfo from "../create/components/AuthorInfo";
 import BlogActions from "../create/components/BlogActions";
 import BlogMetaForm from "../create/components/BlogMetaForm";
 import CoverImageUpload from "../create/components/CoverImageUpload";
-import { useUploadImage } from "@/hooks/uploads/useUpload";
-import { useAuth } from "@/hooks/auths/useAuth";
-import { useUpdatePost } from "@/hooks/posts/usePost";
-import { useChangePostStatus } from "@/hooks/posts/useChangePostStatus";
-import { toast } from "sonner";
 import TagInput from "./TagInput";
 
+import { useUploadImage } from "@/hooks/uploads/useUpload";
+import { useAuth } from "@/hooks/auths/useAuth";
+import { useCreatePost, useUpdatePost } from "@/hooks/posts/usePost";
+import { useChangePostStatus } from "@/hooks/posts/useChangePostStatus";
+
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+
 export default function PostForm({ initialData, onCancel }) {
+  const router = useRouter();
+
   const { user: currentUser, loading: loadingUser } = useAuth();
   const { uploadImage, isLoading: isUploading } = useUploadImage();
+  const { createPostAsync, loading: isCreating } = useCreatePost();
   const { updatePostAsync, loading: isUpdating } = useUpdatePost();
   const { changeStatus } = useChangePostStatus();
 
   const postId = initialData?.id;
   const status = initialData?.status ?? "DRAFT";
 
-  // cover image
+  // ===== state =====
   const [coverImage, setCoverImage] = useState(null);
   const [coverPreview, setCoverPreview] = useState(
     initialData?.coverImage || null,
   );
 
-  // meta
   const [meta, setMeta] = useState({
     title: initialData?.title || "",
     slug: initialData?.slug || "",
     shortDescription: initialData?.shortDescription || "",
     seoTitle: initialData?.seoTitle || "",
     seoDescription: initialData?.seoDescription || "",
-    tags: initialData?.tags || [], // 👈 thêm
+    tags: initialData?.tags || [],
   });
 
-  // content
   const [content, setContent] = useState(initialData?.content || "");
 
-  const isProcessing = isUploading || isUpdating;
+  const isProcessing = isUploading || isCreating || isUpdating;
 
+  // ===== helpers =====
   const handleImageChange = (file, preview) => {
     setCoverImage(file);
     setCoverPreview(preview);
@@ -65,28 +70,31 @@ export default function PostForm({ initialData, onCancel }) {
     return {
       title: meta.title,
       shortDescription: meta.shortDescription,
-      seoTitle: meta.seoTitle || "",
-      seoDescription: meta.seoDescription || "",
+      seoTitle: meta.seoTitle,
+      seoDescription: meta.seoDescription,
       content,
       coverImage: coverImageUrl,
-      tags: meta.tags,
+      tags: meta.tags, // FE gửi lên
     };
   };
 
+  // ===== actions =====
   const handleSave = async () => {
-    if (!postId) {
-      toast.error("Không tìm thấy bài viết");
-      return;
-    }
-
     try {
       const postData = await buildPostData();
 
-      await updatePostAsync({
-        id: postId,
-        data: postData,
-      });
+      // CREATE
+      if (!postId) {
+        const created = await createPostAsync(postData);
+        toast.success("Đã tạo bài viết ✨");
 
+        // redirect sang edit
+        router.replace(`/admin/posts/${created.id}/edit`);
+        return;
+      }
+
+      // UPDATE
+      await updatePostAsync({ id: postId, data: postData });
       toast.success("Đã lưu bài viết 💾");
     } catch (err) {
       console.error(err);
@@ -95,11 +103,12 @@ export default function PostForm({ initialData, onCancel }) {
   };
 
   const handlePublish = async () => {
-    if (!postId) return;
-
     try {
       await handleSave();
+
+      if (!postId) return;
       await changeStatus({ id: postId, action: "publish" });
+
       toast.success("Publish thành công 🚀");
     } catch {
       toast.error("Publish thất bại");
@@ -111,12 +120,13 @@ export default function PostForm({ initialData, onCancel }) {
 
     try {
       await changeStatus({ id: postId, action: "archive" });
-      toast.success("Đã archive bài viết");
+      toast.success("Đã archive bài viết 🗄️");
     } catch {
       toast.error("Archive thất bại");
     }
   };
 
+  // ===== render =====
   return (
     <div className="min-h-screen w-full flex flex-col">
       <div className="flex-1 overflow-y-auto">
@@ -147,7 +157,8 @@ export default function PostForm({ initialData, onCancel }) {
             onChange={setContent}
             disabled={isProcessing}
           />
-          {/*Tas*/}
+
+          {/* Tags */}
           <TagInput
             value={meta.tags}
             onChange={(tags) =>
@@ -161,11 +172,12 @@ export default function PostForm({ initialData, onCancel }) {
         </div>
       </div>
 
+      {/* actions */}
       <div className="sticky bottom-0 w-full bg-linear-to-t from-background via-background/95 to-transparent backdrop-blur-lg border-t border-border/50 z-50">
         <div className="flex items-center justify-center py-4">
           <BlogActions
             onCancel={onCancel}
-            onSaveDraft={handleSave}
+            onSaveDraft={handleSave} // save
             onPublish={handlePublish}
             onArchive={handleArchive}
             isSaving={isProcessing}

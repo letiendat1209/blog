@@ -110,6 +110,8 @@ export default function RichTextEditor({
         },
       }),
       Youtube.configure({
+        width: null,
+        height: null,
         HTMLAttributes: {
           class: "mx-auto rounded-lg my-4",
         },
@@ -131,7 +133,7 @@ export default function RichTextEditor({
         showOnlyWhenEditable: true,
       }),
     ],
-    [placeholder]
+    [placeholder],
   );
 
   const editor = useEditor({
