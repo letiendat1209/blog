@@ -68,6 +68,7 @@ Tạo file `.env` cho backend:
 DATABASE_URL=postgresql://...
 REDIS_URL=redis://localhost:6379
 JWT_SECRET=your_secret
+... nhiều lắm , muốn clone ib 
 lười quá , ae muốn clone ib tui 
 ```
 
